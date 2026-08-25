@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // EmailJS: sends the auto-reply to the CLIENT's own email address.
   // Public key identifies your EmailJS account (safe to expose client-side).
   if (window.emailjs) {
-    emailjs.init({ publicKey: 'jGlmOpQpnzz6S_Frd' });
+    emailjs.init('jGlmOpQpnzz6S_Frd'); // v3 SDK: init takes the key as a plain string, not an object
   }
 
   // Contact form: on submit, fires TWO things in parallel —
@@ -635,6 +635,9 @@ document.addEventListener('DOMContentLoaded', () => {
         : Promise.reject(new Error('EmailJS not loaded'));
 
       const [web3formsResult, emailjsResult] = await Promise.allSettled([web3formsPromise, emailjsPromise]);
+
+      if (web3formsResult.status === 'rejected') console.error('Web3Forms failed:', web3formsResult.reason);
+      if (emailjsResult.status === 'rejected') console.error('EmailJS auto-reply failed:', emailjsResult.reason);
 
       const notifiedUs = web3formsResult.status === 'fulfilled' && web3formsResult.value.success;
       const repliedToClient = emailjsResult.status === 'fulfilled';
